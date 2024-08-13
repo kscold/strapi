@@ -585,6 +585,53 @@ export interface PluginContentReleasesReleaseAction
   };
 }
 
+export interface PluginI18NLocale extends Schema.CollectionType {
+  collectionName: 'i18n_locale';
+  info: {
+    singularName: 'locale';
+    pluralName: 'locales';
+    collectionName: 'locales';
+    displayName: 'Locale';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: false;
+    };
+    'content-type-builder': {
+      visible: false;
+    };
+  };
+  attributes: {
+    name: Attribute.String &
+      Attribute.SetMinMax<
+        {
+          min: 1;
+          max: 50;
+        },
+        number
+      >;
+    code: Attribute.String & Attribute.Unique;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'plugin::i18n.locale',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'plugin::i18n.locale',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface PluginUsersPermissionsPermission
   extends Schema.CollectionType {
   collectionName: 'up_permissions';
@@ -719,6 +766,11 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'manyToOne',
       'plugin::users-permissions.role'
     >;
+    group_users: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::group-user.group-user'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -736,46 +788,70 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
-export interface PluginI18NLocale extends Schema.CollectionType {
-  collectionName: 'i18n_locale';
+export interface ApiAccountAccount extends Schema.CollectionType {
+  collectionName: 'accounts';
   info: {
-    singularName: 'locale';
-    pluralName: 'locales';
-    collectionName: 'locales';
-    displayName: 'Locale';
+    singularName: 'account';
+    pluralName: 'accounts';
+    displayName: 'Account';
     description: '';
   };
   options: {
     draftAndPublish: false;
   };
-  pluginOptions: {
-    'content-manager': {
-      visible: false;
-    };
-    'content-type-builder': {
-      visible: false;
-    };
-  };
   attributes: {
-    name: Attribute.String &
-      Attribute.SetMinMax<
-        {
-          min: 1;
-          max: 50;
-        },
-        number
-      >;
-    code: Attribute.String & Attribute.Unique;
+    oauth_id: Attribute.String;
+    check_user: Attribute.Relation<
+      'api::account.account',
+      'oneToOne',
+      'api::check-user.check-user'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
-      'plugin::i18n.locale',
+      'api::account.account',
       'oneToOne',
       'admin::user'
     > &
       Attribute.Private;
     updatedBy: Attribute.Relation<
-      'plugin::i18n.locale',
+      'api::account.account',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiAchievementAchievement extends Schema.CollectionType {
+  collectionName: 'achievements';
+  info: {
+    singularName: 'achievement';
+    pluralName: 'achievements';
+    displayName: 'Achievement';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    date: Attribute.DateTime & Attribute.Required;
+    rate: Attribute.BigInteger & Attribute.Required;
+    check_users: Attribute.Relation<
+      'api::achievement.achievement',
+      'oneToMany',
+      'api::check-user.check-user'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::achievement.achievement',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::achievement.achievement',
       'oneToOne',
       'admin::user'
     > &
@@ -789,16 +865,22 @@ export interface ApiCategoryCategory extends Schema.CollectionType {
     singularName: 'category';
     pluralName: 'categories';
     displayName: 'Category';
+    description: '';
   };
   options: {
     draftAndPublish: false;
   };
   attributes: {
-    name: Attribute.String;
-    posts: Attribute.Relation<
+    category_name: Attribute.String & Attribute.Required;
+    interest_categories: Attribute.Relation<
       'api::category.category',
       'oneToMany',
-      'api::post.post'
+      'api::interest-category.interest-category'
+    >;
+    tags: Attribute.Relation<
+      'api::category.category',
+      'oneToMany',
+      'api::tag.tag'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -810,6 +892,436 @@ export interface ApiCategoryCategory extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::category.category',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiCheckUserCheckUser extends Schema.CollectionType {
+  collectionName: 'check_users';
+  info: {
+    singularName: 'check-user';
+    pluralName: 'check-users';
+    displayName: 'CheckUser';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    name: Attribute.String & Attribute.Required;
+    introduce: Attribute.String & Attribute.Required;
+    talk_notice: Attribute.Boolean & Attribute.Required;
+    achievement: Attribute.Relation<
+      'api::check-user.check-user',
+      'manyToOne',
+      'api::achievement.achievement'
+    >;
+    account: Attribute.Relation<
+      'api::check-user.check-user',
+      'oneToOne',
+      'api::account.account'
+    >;
+    follows: Attribute.Relation<
+      'api::check-user.check-user',
+      'oneToMany',
+      'api::follow.follow'
+    >;
+    todo: Attribute.Relation<
+      'api::check-user.check-user',
+      'oneToMany',
+      'api::todo.todo'
+    >;
+    user: Attribute.Relation<
+      'api::check-user.check-user',
+      'oneToMany',
+      'api::cheer.cheer'
+    >;
+    signals: Attribute.Relation<
+      'api::check-user.check-user',
+      'oneToMany',
+      'api::signal.signal'
+    >;
+    routine_todo: Attribute.Relation<
+      'api::check-user.check-user',
+      'oneToMany',
+      'api::routine-todo.routine-todo'
+    >;
+    group: Attribute.Relation<
+      'api::check-user.check-user',
+      'oneToOne',
+      'api::group.group'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::check-user.check-user',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::check-user.check-user',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiCheerCheer extends Schema.CollectionType {
+  collectionName: 'cheers';
+  info: {
+    singularName: 'cheer';
+    pluralName: 'cheers';
+    displayName: 'Cheer';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    cheer: Attribute.Relation<
+      'api::cheer.cheer',
+      'manyToOne',
+      'api::check-user.check-user'
+    >;
+    cheer_at: Attribute.DateTime & Attribute.Required;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::cheer.cheer',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::cheer.cheer',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiEntityTypeEntityType extends Schema.CollectionType {
+  collectionName: 'entity_types';
+  info: {
+    singularName: 'entity-type';
+    pluralName: 'entity-types';
+    displayName: 'entityType';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    type: Attribute.String;
+    create_type: Attribute.DateTime;
+    entity_type: Attribute.Relation<
+      'api::entity-type.entity-type',
+      'oneToMany',
+      'api::signal.signal'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::entity-type.entity-type',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::entity-type.entity-type',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiFollowFollow extends Schema.CollectionType {
+  collectionName: 'follows';
+  info: {
+    singularName: 'follow';
+    pluralName: 'follows';
+    displayName: 'Follow';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    fallow_at: Attribute.DateTime;
+    check_user: Attribute.Relation<
+      'api::follow.follow',
+      'manyToOne',
+      'api::check-user.check-user'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::follow.follow',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::follow.follow',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiGroupGroup extends Schema.CollectionType {
+  collectionName: 'groups';
+  info: {
+    singularName: 'group';
+    pluralName: 'groups';
+    displayName: 'Group';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    Name: Attribute.String & Attribute.Required;
+    Introduce: Attribute.Text;
+    StartAt: Attribute.DateTime & Attribute.Required;
+    EndAt: Attribute.DateTime & Attribute.Required;
+    Keyword: Attribute.String;
+    CanJoin: Attribute.Boolean & Attribute.Required;
+    check_user: Attribute.Relation<
+      'api::group.group',
+      'oneToOne',
+      'api::check-user.check-user'
+    >;
+    group_users: Attribute.Relation<
+      'api::group.group',
+      'oneToMany',
+      'api::group-user.group-user'
+    >;
+    group_achievements: Attribute.Relation<
+      'api::group.group',
+      'oneToMany',
+      'api::group-achievement.group-achievement'
+    >;
+    group_announces: Attribute.Relation<
+      'api::group.group',
+      'oneToMany',
+      'api::group-announce.group-announce'
+    >;
+    group_todos: Attribute.Relation<
+      'api::group.group',
+      'oneToMany',
+      'api::group-todo.group-todo'
+    >;
+    categories: Attribute.Relation<
+      'api::group.group',
+      'oneToMany',
+      'api::category.category'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::group.group',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::group.group',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiGroupAchievementGroupAchievement
+  extends Schema.CollectionType {
+  collectionName: 'group_achievements';
+  info: {
+    singularName: 'group-achievement';
+    pluralName: 'group-achievements';
+    displayName: 'GroupAchievement';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    group_user: Attribute.Relation<
+      'api::group-achievement.group-achievement',
+      'manyToOne',
+      'api::group-user.group-user'
+    >;
+    group: Attribute.Relation<
+      'api::group-achievement.group-achievement',
+      'manyToOne',
+      'api::group.group'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::group-achievement.group-achievement',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::group-achievement.group-achievement',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiGroupAnnounceGroupAnnounce extends Schema.CollectionType {
+  collectionName: 'group_announces';
+  info: {
+    singularName: 'group-announce';
+    pluralName: 'group-announces';
+    displayName: 'GroupAnnounce';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    announce_content: Attribute.String & Attribute.Required;
+    CreateDate: Attribute.DateTime & Attribute.Required;
+    group: Attribute.Relation<
+      'api::group-announce.group-announce',
+      'manyToOne',
+      'api::group.group'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::group-announce.group-announce',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::group-announce.group-announce',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiGroupTodoGroupTodo extends Schema.CollectionType {
+  collectionName: 'group_todos';
+  info: {
+    singularName: 'group-todo';
+    pluralName: 'group-todos';
+    displayName: 'GroupTodo';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    Content: Attribute.Text & Attribute.Required;
+    PostAt: Attribute.DateTime & Attribute.Required;
+    group: Attribute.Relation<
+      'api::group-todo.group-todo',
+      'manyToOne',
+      'api::group.group'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::group-todo.group-todo',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::group-todo.group-todo',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiGroupUserGroupUser extends Schema.CollectionType {
+  collectionName: 'group_users';
+  info: {
+    singularName: 'group-user';
+    pluralName: 'group-users';
+    displayName: 'GroupUser';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    group: Attribute.Relation<
+      'api::group-user.group-user',
+      'manyToOne',
+      'api::group.group'
+    >;
+    users_permissions_user: Attribute.Relation<
+      'api::group-user.group-user',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    group_achievements: Attribute.Relation<
+      'api::group-user.group-user',
+      'oneToMany',
+      'api::group-achievement.group-achievement'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::group-user.group-user',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::group-user.group-user',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiInterestCategoryInterestCategory
+  extends Schema.CollectionType {
+  collectionName: 'interest_categories';
+  info: {
+    singularName: 'interest-category';
+    pluralName: 'interest-categories';
+    displayName: 'InterestCategory';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    category: Attribute.Relation<
+      'api::interest-category.interest-category',
+      'manyToOne',
+      'api::category.category'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::interest-category.interest-category',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::interest-category.interest-category',
       'oneToOne',
       'admin::user'
     > &
@@ -832,16 +1344,190 @@ export interface ApiPostPost extends Schema.CollectionType {
     title: Attribute.String;
     content: Attribute.Text;
     hit: Attribute.Integer;
-    category: Attribute.Relation<
-      'api::post.post',
-      'manyToOne',
-      'api::category.category'
-    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::post.post', 'oneToOne', 'admin::user'> &
       Attribute.Private;
     updatedBy: Attribute.Relation<'api::post.post', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
+export interface ApiPostTagPostTag extends Schema.CollectionType {
+  collectionName: 'post_tags';
+  info: {
+    singularName: 'post-tag';
+    pluralName: 'post-tags';
+    displayName: 'PostTag';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    tag: Attribute.Relation<
+      'api::post-tag.post-tag',
+      'manyToOne',
+      'api::tag.tag'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::post-tag.post-tag',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::post-tag.post-tag',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiRoutineTodoRoutineTodo extends Schema.CollectionType {
+  collectionName: 'routine_todos';
+  info: {
+    singularName: 'routine-todo';
+    pluralName: 'routine-todos';
+    displayName: 'routineTodo';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    routine_day: Attribute.Enumeration<
+      [
+        'Sunday(\uC77C\uC694\uC77C)',
+        'Monday(\uC6D4\uC694\uC77C)',
+        'Tuesday(\uD654\uC694\uC77C)',
+        'Wednesday(\uC218\uC694\uC77C)',
+        'Thursday(\uBAA9\uC694\uC77C)',
+        'Friday(\uAE08\uC694\uC77C)',
+        'Saturday(\uD1A0\uC694\uC77C)'
+      ]
+    > &
+      Attribute.Required &
+      Attribute.DefaultTo<'Sunday(\uC77C\uC694\uC77C)'>;
+    routine_content: Attribute.RichText & Attribute.Required;
+    routine_at: Attribute.DateTime & Attribute.Required;
+    check: Attribute.Boolean & Attribute.Required & Attribute.DefaultTo<false>;
+    user: Attribute.Relation<
+      'api::routine-todo.routine-todo',
+      'manyToOne',
+      'api::check-user.check-user'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::routine-todo.routine-todo',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::routine-todo.routine-todo',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiSignalSignal extends Schema.CollectionType {
+  collectionName: 'signals';
+  info: {
+    singularName: 'signal';
+    pluralName: 'signals';
+    displayName: 'Signal';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    entity_id: Attribute.Integer;
+    is_read: Attribute.Boolean;
+    create_at: Attribute.DateTime & Attribute.Required;
+    message: Attribute.String & Attribute.Required;
+    check_user: Attribute.Relation<
+      'api::signal.signal',
+      'manyToOne',
+      'api::check-user.check-user'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::signal.signal',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::signal.signal',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiTagTag extends Schema.CollectionType {
+  collectionName: 'tags';
+  info: {
+    singularName: 'tag';
+    pluralName: 'tags';
+    displayName: 'Tag';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    Tag_Name: Attribute.String & Attribute.Required;
+    post_tags: Attribute.Relation<
+      'api::tag.tag',
+      'oneToMany',
+      'api::post-tag.post-tag'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::tag.tag', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::tag.tag', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
+export interface ApiTodoTodo extends Schema.CollectionType {
+  collectionName: 'todos';
+  info: {
+    singularName: 'todo';
+    pluralName: 'todos';
+    displayName: 'Todo';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    content: Attribute.RichText & Attribute.Required;
+    todo_day: Attribute.DateTime & Attribute.Required;
+    todo_at: Attribute.Time & Attribute.Required;
+    check: Attribute.Boolean & Attribute.Required & Attribute.DefaultTo<false>;
+    user: Attribute.Relation<
+      'api::todo.todo',
+      'manyToOne',
+      'api::check-user.check-user'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::todo.todo', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::todo.todo', 'oneToOne', 'admin::user'> &
       Attribute.Private;
   };
 }
@@ -860,12 +1546,29 @@ declare module '@strapi/types' {
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
+      'plugin::i18n.locale': PluginI18NLocale;
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
-      'plugin::i18n.locale': PluginI18NLocale;
+      'api::account.account': ApiAccountAccount;
+      'api::achievement.achievement': ApiAchievementAchievement;
       'api::category.category': ApiCategoryCategory;
+      'api::check-user.check-user': ApiCheckUserCheckUser;
+      'api::cheer.cheer': ApiCheerCheer;
+      'api::entity-type.entity-type': ApiEntityTypeEntityType;
+      'api::follow.follow': ApiFollowFollow;
+      'api::group.group': ApiGroupGroup;
+      'api::group-achievement.group-achievement': ApiGroupAchievementGroupAchievement;
+      'api::group-announce.group-announce': ApiGroupAnnounceGroupAnnounce;
+      'api::group-todo.group-todo': ApiGroupTodoGroupTodo;
+      'api::group-user.group-user': ApiGroupUserGroupUser;
+      'api::interest-category.interest-category': ApiInterestCategoryInterestCategory;
       'api::post.post': ApiPostPost;
+      'api::post-tag.post-tag': ApiPostTagPostTag;
+      'api::routine-todo.routine-todo': ApiRoutineTodoRoutineTodo;
+      'api::signal.signal': ApiSignalSignal;
+      'api::tag.tag': ApiTagTag;
+      'api::todo.todo': ApiTodoTodo;
     }
   }
 }

@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "cheers",
+  "info": {
+    "singularName": "cheer",
+    "pluralName": "cheers",
+    "displayName": "Cheer"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "cheer": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::check-user.check-user",
+      "inversedBy": "user"
+    },
+    "cheer_at": {
+      "required": true,
+      "type": "datetime"
+    }
+  }
+}

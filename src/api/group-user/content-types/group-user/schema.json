@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "group_users",
+  "info": {
+    "singularName": "group-user",
+    "pluralName": "group-users",
+    "displayName": "GroupUser"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "group": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::group.group",
+      "inversedBy": "group_users"
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "group_users"
+    },
+    "group_achievements": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::group-achievement.group-achievement",
+      "mappedBy": "group_user"
+    }
+  }
+}

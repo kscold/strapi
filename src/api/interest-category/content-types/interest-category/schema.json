@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "interest_categories",
+  "info": {
+    "singularName": "interest-category",
+    "pluralName": "interest-categories",
+    "displayName": "InterestCategory"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::category.category",
+      "inversedBy": "interest_categories"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "kind": "collectionType",
+  "collectionName": "group_todos",
+  "info": {
+    "singularName": "group-todo",
+    "pluralName": "group-todos",
+    "displayName": "GroupTodo"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Content": {
+      "type": "text",
+      "required": true
+    },
+    "PostAt": {
+      "required": true,
+      "type": "datetime"
+    },
+    "group": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::group.group",
+      "inversedBy": "group_todos"
+    }
+  }
+}

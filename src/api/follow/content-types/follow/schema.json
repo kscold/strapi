@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "follows",
+  "info": {
+    "singularName": "follow",
+    "pluralName": "follows",
+    "displayName": "Follow",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "fallow_at": {
+      "type": "datetime"
+    },
+    "check_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::check-user.check-user",
+      "inversedBy": "follows"
+    }
+  }
+}

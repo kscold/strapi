@@ -1,0 +1,29 @@
+{
+  "kind": "collectionType",
+  "collectionName": "group_announces",
+  "info": {
+    "singularName": "group-announce",
+    "pluralName": "group-announces",
+    "displayName": "GroupAnnounce"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "announce_content": {
+      "type": "string",
+      "required": true
+    },
+    "CreateDate": {
+      "required": true,
+      "type": "datetime"
+    },
+    "group": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::group.group",
+      "inversedBy": "group_announces"
+    }
+  }
+}

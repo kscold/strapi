@@ -1,0 +1,48 @@
+{
+  "kind": "collectionType",
+  "collectionName": "routine_todos",
+  "info": {
+    "singularName": "routine-todo",
+    "pluralName": "routine-todos",
+    "displayName": "routineTodo"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "routine_day": {
+      "type": "enumeration",
+      "enum": [
+        "Sunday(일요일)",
+        "Monday(월요일)",
+        "Tuesday(화요일)",
+        "Wednesday(수요일)",
+        "Thursday(목요일)",
+        "Friday(금요일)",
+        "Saturday(토요일)"
+      ],
+      "default": "Sunday(일요일)",
+      "required": true
+    },
+    "routine_content": {
+      "type": "richtext",
+      "required": true
+    },
+    "routine_at": {
+      "type": "datetime",
+      "required": true
+    },
+    "check": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::check-user.check-user",
+      "inversedBy": "routine_todo"
+    }
+  }
+}

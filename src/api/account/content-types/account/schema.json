@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "accounts",
+  "info": {
+    "singularName": "account",
+    "pluralName": "accounts",
+    "displayName": "Account",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "oauth_id": {
+      "type": "string"
+    },
+    "check_user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::check-user.check-user",
+      "mappedBy": "account"
+    }
+  }
+}

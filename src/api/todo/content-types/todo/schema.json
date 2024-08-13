@@ -1,0 +1,39 @@
+{
+  "kind": "collectionType",
+  "collectionName": "todos",
+  "info": {
+    "singularName": "todo",
+    "pluralName": "todos",
+    "displayName": "Todo",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "content": {
+      "type": "richtext",
+      "required": true
+    },
+    "todo_day": {
+      "type": "datetime",
+      "required": true
+    },
+    "todo_at": {
+      "type": "time",
+      "required": true
+    },
+    "check": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::check-user.check-user",
+      "inversedBy": "todo"
+    }
+  }
+}

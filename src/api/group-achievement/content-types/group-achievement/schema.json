@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "group_achievements",
+  "info": {
+    "singularName": "group-achievement",
+    "pluralName": "group-achievements",
+    "displayName": "GroupAchievement"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "group_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::group-user.group-user",
+      "inversedBy": "group_achievements"
+    },
+    "group": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::group.group",
+      "inversedBy": "group_achievements"
+    }
+  }
+}

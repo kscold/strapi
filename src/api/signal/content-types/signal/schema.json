@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "signals",
+  "info": {
+    "singularName": "signal",
+    "pluralName": "signals",
+    "displayName": "Signal",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "entity_id": {
+      "type": "integer"
+    },
+    "is_read": {
+      "type": "boolean"
+    },
+    "create_at": {
+      "type": "datetime",
+      "required": true
+    },
+    "message": {
+      "type": "string",
+      "required": true
+    },
+    "check_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::check-user.check-user",
+      "inversedBy": "signals"
+    }
+  }
+}

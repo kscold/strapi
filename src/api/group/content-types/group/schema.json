@@ -1,0 +1,75 @@
+{
+  "kind": "collectionType",
+  "collectionName": "groups",
+  "info": {
+    "singularName": "group",
+    "pluralName": "groups",
+    "displayName": "Group",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Name": {
+      "type": "string",
+      "required": true
+    },
+    "Introduce": {
+      "type": "text",
+      "required": false
+    },
+    "StartAt": {
+      "type": "datetime",
+      "required": true
+    },
+    "EndAt": {
+      "required": true,
+      "type": "datetime"
+    },
+    "Keyword": {
+      "type": "string",
+      "required": false
+    },
+    "CanJoin": {
+      "type": "boolean",
+      "required": true
+    },
+    "check_user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::check-user.check-user",
+      "inversedBy": "group"
+    },
+    "group_users": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::group-user.group-user",
+      "mappedBy": "group"
+    },
+    "group_achievements": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::group-achievement.group-achievement",
+      "mappedBy": "group"
+    },
+    "group_announces": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::group-announce.group-announce",
+      "mappedBy": "group"
+    },
+    "group_todos": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::group-todo.group-todo",
+      "mappedBy": "group"
+    },
+    "categories": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::category.category"
+    }
+  }
+}
