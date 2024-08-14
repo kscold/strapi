@@ -14,11 +14,13 @@
   "attributes": {
     "Name": {
       "type": "string",
-      "required": true
+      "required": true,
+      "maxLength": 25
     },
     "Introduce": {
       "type": "text",
-      "required": false
+      "required": false,
+      "maxLength": 100
     },
     "StartAt": {
       "type": "datetime",
@@ -29,18 +31,14 @@
       "type": "datetime"
     },
     "Keyword": {
-      "type": "string",
-      "required": false
+      "type": "text",
+      "required": false,
+      "maxLength": 100
     },
-    "CanJoin": {
+    "can_join": {
       "type": "boolean",
-      "required": true
-    },
-    "check_user": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::check-user.check-user",
-      "inversedBy": "group"
+      "required": true,
+      "default": false
     },
     "group_users": {
       "type": "relation",
@@ -51,8 +49,7 @@
     "group_achievements": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::group-achievement.group-achievement",
-      "mappedBy": "group"
+      "target": "api::group-achievement.group-achievement"
     },
     "group_announces": {
       "type": "relation",
@@ -70,6 +67,12 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::category.category"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "mappedBy": "group"
     }
   }
 }

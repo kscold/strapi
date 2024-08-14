@@ -9,8 +9,7 @@
     "displayName": "User"
   },
   "options": {
-    "draftAndPublish": false,
-    "timestamps": true
+    "draftAndPublish": false
   },
   "attributes": {
     "username": {
@@ -66,11 +65,55 @@
       "inversedBy": "users",
       "configurable": false
     },
+    "introduce": {
+      "type": "string"
+    },
+    "talk_notice": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "cheers": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::cheer.cheer",
+      "mappedBy": "user"
+    },
+    "achievements": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::achievement.achievement",
+      "mappedBy": "user"
+    },
+    "routine_todos": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::routine-todo.routine-todo",
+      "mappedBy": "user"
+    },
+    "todos": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::todo.todo",
+      "mappedBy": "user"
+    },
+    "group": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::group.group",
+      "inversedBy": "user"
+    },
     "group_users": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::group-user.group-user",
-      "mappedBy": "users_permissions_user"
+      "mappedBy": "user"
+    },
+    "follows": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::follow.follow",
+      "mappedBy": "user"
     }
   }
 }

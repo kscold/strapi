@@ -4,22 +4,31 @@
   "info": {
     "singularName": "cheer",
     "pluralName": "cheers",
-    "displayName": "Cheer"
+    "displayName": "Cheer",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
-    "cheer": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::check-user.check-user",
-      "inversedBy": "user"
-    },
     "cheer_at": {
       "required": true,
       "type": "datetime"
+    },
+    "user_id": {
+      "type": "biginteger",
+      "required": true
+    },
+    "user_id2": {
+      "type": "biginteger",
+      "required": true
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "cheers"
     }
   }
 }

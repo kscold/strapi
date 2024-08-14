@@ -12,13 +12,21 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "fallow_at": {
+    "follow_at": {
       "type": "datetime"
     },
-    "check_user": {
+    "following_id": {
+      "type": "biginteger",
+      "required": true
+    },
+    "follower_id": {
+      "type": "biginteger",
+      "required": true
+    },
+    "user": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::check-user.check-user",
+      "target": "plugin::users-permissions.user",
       "inversedBy": "follows"
     }
   }

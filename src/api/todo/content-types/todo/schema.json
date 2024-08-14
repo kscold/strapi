@@ -32,8 +32,8 @@
     "user": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::check-user.check-user",
-      "inversedBy": "todo"
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "todos"
     }
   }
 }

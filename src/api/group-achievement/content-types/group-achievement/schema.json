@@ -16,12 +16,6 @@
       "relation": "manyToOne",
       "target": "api::group-user.group-user",
       "inversedBy": "group_achievements"
-    },
-    "group": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::group.group",
-      "inversedBy": "group_achievements"
     }
   }
 }

@@ -25,12 +25,6 @@
     "message": {
       "type": "string",
       "required": true
-    },
-    "check_user": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::check-user.check-user",
-      "inversedBy": "signals"
     }
   }
 }

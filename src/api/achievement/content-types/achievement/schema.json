@@ -20,11 +20,11 @@
       "type": "biginteger",
       "required": true
     },
-    "check_users": {
+    "user": {
       "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::check-user.check-user",
-      "mappedBy": "achievement"
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "achievements"
     }
   }
 }

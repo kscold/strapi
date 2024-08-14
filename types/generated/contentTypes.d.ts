@@ -737,7 +737,6 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
   options: {
     draftAndPublish: false;
-    timestamps: true;
   };
   attributes: {
     username: Attribute.String &
@@ -766,10 +765,44 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'manyToOne',
       'plugin::users-permissions.role'
     >;
+    introduce: Attribute.String;
+    talk_notice: Attribute.Boolean &
+      Attribute.Required &
+      Attribute.DefaultTo<false>;
+    cheers: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::cheer.cheer'
+    >;
+    achievements: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::achievement.achievement'
+    >;
+    routine_todos: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::routine-todo.routine-todo'
+    >;
+    todos: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::todo.todo'
+    >;
+    group: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToOne',
+      'api::group.group'
+    >;
     group_users: Attribute.Relation<
       'plugin::users-permissions.user',
       'oneToMany',
       'api::group-user.group-user'
+    >;
+    follows: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::follow.follow'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -801,11 +834,6 @@ export interface ApiAccountAccount extends Schema.CollectionType {
   };
   attributes: {
     oauth_id: Attribute.String;
-    check_user: Attribute.Relation<
-      'api::account.account',
-      'oneToOne',
-      'api::check-user.check-user'
-    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -837,10 +865,10 @@ export interface ApiAchievementAchievement extends Schema.CollectionType {
   attributes: {
     date: Attribute.DateTime & Attribute.Required;
     rate: Attribute.BigInteger & Attribute.Required;
-    check_users: Attribute.Relation<
+    user: Attribute.Relation<
       'api::achievement.achievement',
-      'oneToMany',
-      'api::check-user.check-user'
+      'manyToOne',
+      'plugin::users-permissions.user'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -899,95 +927,26 @@ export interface ApiCategoryCategory extends Schema.CollectionType {
   };
 }
 
-export interface ApiCheckUserCheckUser extends Schema.CollectionType {
-  collectionName: 'check_users';
-  info: {
-    singularName: 'check-user';
-    pluralName: 'check-users';
-    displayName: 'CheckUser';
-    description: '';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    name: Attribute.String & Attribute.Required;
-    introduce: Attribute.String & Attribute.Required;
-    talk_notice: Attribute.Boolean & Attribute.Required;
-    achievement: Attribute.Relation<
-      'api::check-user.check-user',
-      'manyToOne',
-      'api::achievement.achievement'
-    >;
-    account: Attribute.Relation<
-      'api::check-user.check-user',
-      'oneToOne',
-      'api::account.account'
-    >;
-    follows: Attribute.Relation<
-      'api::check-user.check-user',
-      'oneToMany',
-      'api::follow.follow'
-    >;
-    todo: Attribute.Relation<
-      'api::check-user.check-user',
-      'oneToMany',
-      'api::todo.todo'
-    >;
-    user: Attribute.Relation<
-      'api::check-user.check-user',
-      'oneToMany',
-      'api::cheer.cheer'
-    >;
-    signals: Attribute.Relation<
-      'api::check-user.check-user',
-      'oneToMany',
-      'api::signal.signal'
-    >;
-    routine_todo: Attribute.Relation<
-      'api::check-user.check-user',
-      'oneToMany',
-      'api::routine-todo.routine-todo'
-    >;
-    group: Attribute.Relation<
-      'api::check-user.check-user',
-      'oneToOne',
-      'api::group.group'
-    >;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::check-user.check-user',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::check-user.check-user',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface ApiCheerCheer extends Schema.CollectionType {
   collectionName: 'cheers';
   info: {
     singularName: 'cheer';
     pluralName: 'cheers';
     displayName: 'Cheer';
+    description: '';
   };
   options: {
     draftAndPublish: false;
   };
   attributes: {
-    cheer: Attribute.Relation<
+    cheer_at: Attribute.DateTime & Attribute.Required;
+    user_id: Attribute.BigInteger & Attribute.Required;
+    user_id2: Attribute.BigInteger & Attribute.Required;
+    user: Attribute.Relation<
       'api::cheer.cheer',
       'manyToOne',
-      'api::check-user.check-user'
+      'plugin::users-permissions.user'
     >;
-    cheer_at: Attribute.DateTime & Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1054,11 +1013,13 @@ export interface ApiFollowFollow extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
-    fallow_at: Attribute.DateTime;
-    check_user: Attribute.Relation<
+    follow_at: Attribute.DateTime;
+    following_id: Attribute.BigInteger & Attribute.Required;
+    follower_id: Attribute.BigInteger & Attribute.Required;
+    user: Attribute.Relation<
       'api::follow.follow',
       'manyToOne',
-      'api::check-user.check-user'
+      'plugin::users-permissions.user'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -1090,17 +1051,24 @@ export interface ApiGroupGroup extends Schema.CollectionType {
     draftAndPublish: false;
   };
   attributes: {
-    Name: Attribute.String & Attribute.Required;
-    Introduce: Attribute.Text;
+    Name: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 25;
+      }>;
+    Introduce: Attribute.Text &
+      Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
     StartAt: Attribute.DateTime & Attribute.Required;
     EndAt: Attribute.DateTime & Attribute.Required;
-    Keyword: Attribute.String;
-    CanJoin: Attribute.Boolean & Attribute.Required;
-    check_user: Attribute.Relation<
-      'api::group.group',
-      'oneToOne',
-      'api::check-user.check-user'
-    >;
+    Keyword: Attribute.Text &
+      Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    can_join: Attribute.Boolean &
+      Attribute.Required &
+      Attribute.DefaultTo<false>;
     group_users: Attribute.Relation<
       'api::group.group',
       'oneToMany',
@@ -1125,6 +1093,11 @@ export interface ApiGroupGroup extends Schema.CollectionType {
       'api::group.group',
       'oneToMany',
       'api::category.category'
+    >;
+    user: Attribute.Relation<
+      'api::group.group',
+      'oneToOne',
+      'plugin::users-permissions.user'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -1159,11 +1132,6 @@ export interface ApiGroupAchievementGroupAchievement
       'api::group-achievement.group-achievement',
       'manyToOne',
       'api::group-user.group-user'
-    >;
-    group: Attribute.Relation<
-      'api::group-achievement.group-achievement',
-      'manyToOne',
-      'api::group.group'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -1268,15 +1236,15 @@ export interface ApiGroupUserGroupUser extends Schema.CollectionType {
       'manyToOne',
       'api::group.group'
     >;
-    users_permissions_user: Attribute.Relation<
-      'api::group-user.group-user',
-      'manyToOne',
-      'plugin::users-permissions.user'
-    >;
     group_achievements: Attribute.Relation<
       'api::group-user.group-user',
       'oneToMany',
       'api::group-achievement.group-achievement'
+    >;
+    user: Attribute.Relation<
+      'api::group-user.group-user',
+      'manyToOne',
+      'plugin::users-permissions.user'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -1391,36 +1359,33 @@ export interface ApiRoutineTodoRoutineTodo extends Schema.CollectionType {
   info: {
     singularName: 'routine-todo';
     pluralName: 'routine-todos';
-    displayName: 'routineTodo';
+    displayName: 'RoutineTodo';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
-    routine_day: Attribute.Enumeration<
+    routine_content: Attribute.RichText & Attribute.Required;
+    todo_day: Attribute.Enumeration<
       [
-        'Sunday(\uC77C\uC694\uC77C)',
         'Monday(\uC6D4\uC694\uC77C)',
         'Tuesday(\uD654\uC694\uC77C)',
         'Wednesday(\uC218\uC694\uC77C)',
         'Thursday(\uBAA9\uC694\uC77C)',
         'Friday(\uAE08\uC694\uC77C)',
-        'Saturday(\uD1A0\uC694\uC77C)'
+        'Saturday(\uD1A0\uC694\uC77C)',
+        'Sunday(\uC77C\uC694\uC77C)'
       ]
-    > &
-      Attribute.Required &
-      Attribute.DefaultTo<'Sunday(\uC77C\uC694\uC77C)'>;
-    routine_content: Attribute.RichText & Attribute.Required;
-    routine_at: Attribute.DateTime & Attribute.Required;
-    check: Attribute.Boolean & Attribute.Required & Attribute.DefaultTo<false>;
+    >;
+    todo_at: Attribute.Time;
+    check: Attribute.Boolean;
     user: Attribute.Relation<
       'api::routine-todo.routine-todo',
       'manyToOne',
-      'api::check-user.check-user'
+      'plugin::users-permissions.user'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
       'api::routine-todo.routine-todo',
       'oneToOne',
@@ -1452,11 +1417,6 @@ export interface ApiSignalSignal extends Schema.CollectionType {
     is_read: Attribute.Boolean;
     create_at: Attribute.DateTime & Attribute.Required;
     message: Attribute.String & Attribute.Required;
-    check_user: Attribute.Relation<
-      'api::signal.signal',
-      'manyToOne',
-      'api::check-user.check-user'
-    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1521,7 +1481,7 @@ export interface ApiTodoTodo extends Schema.CollectionType {
     user: Attribute.Relation<
       'api::todo.todo',
       'manyToOne',
-      'api::check-user.check-user'
+      'plugin::users-permissions.user'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -1553,7 +1513,6 @@ declare module '@strapi/types' {
       'api::account.account': ApiAccountAccount;
       'api::achievement.achievement': ApiAchievementAchievement;
       'api::category.category': ApiCategoryCategory;
-      'api::check-user.check-user': ApiCheckUserCheckUser;
       'api::cheer.cheer': ApiCheerCheer;
       'api::entity-type.entity-type': ApiEntityTypeEntityType;
       'api::follow.follow': ApiFollowFollow;
